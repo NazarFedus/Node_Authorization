@@ -1,8 +1,11 @@
+const User = require('./models/User');
+const Role = require('./models/Role');
+
 class authController {
      async registration(req, res){
           try{
 
-          } catch(e){
+          } catch(e) {
 
           }
      }
@@ -15,7 +18,11 @@ class authController {
      }
      async getUsers(req, res){
           try{
-               res.json("server work")
+               const userRole = new Role();
+               const adminRole = new Role({value: "ADMIN"});
+               await userRole.save() // to save this in database by mongoose method;
+               await adminRole.save();
+               res.json("server work");
           } catch(e){
 
           }
