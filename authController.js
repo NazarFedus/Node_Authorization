@@ -1,27 +1,36 @@
 const User = require('./models/User');
 const Role = require('./models/Role');
+const bcrypt = require('bcryptjs');
 
 class authController {
      async registration(req, res){
           try{
+               const {username, password} = req.body; // to get data from the body of the request
+               const candidate = await User.findOne({username}); // to find the user in the database
 
+               if(candidate){
+                    return res.status(400).json({message: "User with this username already exists"})
+               }
+               const hashPassword = bcrypt.hashSync(password, 7);
+               const userRole = await Role.findOne({value: "USER"});
+               const newUser = new User({username, password: hashPassword, roles: [userRole.value]});
+               await newUser.save(); // to save the user in the database
+               return res.json({message: "User was created"}); // to send a response to the client
           } catch(e) {
-
+               console.log(e);
+               res.status(400).json({message: "Registration error"})
           }
      }
      async login(req, res){
           try{
 
           } catch(e){
-
+               console.log(e);
+               res.status(400).json({message: "Login error"})
           }
      }
      async getUsers(req, res){
           try{
-               const userRole = new Role();
-               const adminRole = new Role({value: "ADMIN"});
-               await userRole.save() // to save this in database by mongoose method;
-               await adminRole.save();
                res.json("server work");
           } catch(e){
 
